@@ -13,18 +13,8 @@
 <meta name="apple-mobile-web-app-title" content="Dompet">
 <meta name="description" content="Aplikasi pencatat keuangan pribadi">
 
-<!-- PWA Manifest (inline) -->
-<link rel="manifest" href="data:application/json,{
-  %22name%22:%22Dompet%20%E2%80%94%20Keuangan%20Pribadi%22,
-  %22short_name%22:%22Dompet%22,
-  %22description%22:%22Aplikasi%20pencatat%20keuangan%20pribadi%22,
-  %22start_url%22:%22.%22,
-  %22display%22:%22standalone%22,
-  %22background_color%22:%22%230e0f11%22,
-  %22theme_color%22:%22%230e0f11%22,
-  %22orientation%22:%22portrait%22,
-  %22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20512%20512%27%3E%3Crect%20width%3D%27512%27%20height%3D%27512%27%20rx%3D%27100%27%20fill%3D%27%230e0f11%27%2F%3E%3Ctext%20x%3D%27256%27%20y%3D%27330%27%20font-size%3D%27300%27%20text-anchor%3D%27middle%27%3E%F0%9F%92%B0%3C%2Ftext%3E%3C%2Fsvg%3E%22,%22sizes%22:%22512x512%22,%22type%22:%22image/svg+xml%22,%22purpose%22:%22any%20maskable%22}]
-}">
+<!-- PWA Manifest -->
+<link rel="manifest" href="./manifest.json">
 
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -1354,7 +1344,7 @@ if('serviceWorker' in navigator){
   const swCode = `
     const CACHE = 'dompet-v1';
     self.addEventListener('install', e => {
-      e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./'])));
+      e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./index.html','./manifest.json','./icon-192.png','./icon-512.png'])));
       self.skipWaiting();
     });
     self.addEventListener('activate', e => {
