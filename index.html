@@ -798,22 +798,33 @@ function renderPosSelectEl(selId,all=false,filterType=null){
 // Internal pos setoran transactions don't affect wallet balance
 function recalcWalletClean(){
   const s=getSettings();
+  // Start from saldo awal as the true base
   const w={cash:s.saldoCash||0,bank:s.saldoBank||0};
   const data=getData();
-  Object.values(data).forEach(period=>{
+  // Sort periods chronologically so calculation is ordered
+  const periods=Object.keys(data).sort();
+  periods.forEach(periodKey=>{
+    const period=data[periodKey];
     (period.transactions||[]).forEach(tx=>{
       if(tx.type==='income'&&tx.wallet){
+        // Skip pencairan pos eksternal — uang dari pos bukan dari luar
+        // Pencairan hanya memindahkan dari pos ke wallet, pos saldo sudah berkurang
+        // Tapi tetap hitung karena uang memang masuk ke wallet dari luar pos
         w[tx.wallet]=(w[tx.wallet]||0)+tx.amount;
       } else if(tx.type==='expense'&&tx.wallet){
-        // Skip internal pos setoran — money didn't actually leave wallet
+        // Skip internal pos — money didn't leave wallet
         if(tx.posType==='internal')return;
-        w[tx.wallet]=Math.max(0,(w[tx.wallet]||0)-tx.amount);
+        // Allow negative during calculation, clamp at display
+        w[tx.wallet]=(w[tx.wallet]||0)-tx.amount;
       } else if(tx.type==='transfer'){
-        if(tx.from)w[tx.from]=Math.max(0,(w[tx.from]||0)-tx.amount);
+        if(tx.from)w[tx.from]=(w[tx.from]||0)-tx.amount;
         if(tx.to)w[tx.to]=(w[tx.to]||0)+tx.amount;
       }
     });
   });
+  // Clamp to 0 only at the end for display
+  w.cash=Math.max(0,w.cash);
+  w.bank=Math.max(0,w.bank);
   return w;
 }
 
